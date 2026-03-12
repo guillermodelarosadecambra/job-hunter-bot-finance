@@ -72,3 +72,26 @@ JOB_SOURCES = [
     "efinancialcareers",
     "glassdoor"
 ]
+
+
+
+import config
+
+def main():
+    print("Job Hunter Bot starting...\n")
+
+    print("Target roles:")
+    for role in config.TARGET_ROLES:
+        print("-", role)
+
+    print("\nTarget locations:")
+    for location in config.TARGET_LOCATIONS:
+        print("-", location)
+
+    print("\nTarget companies:")
+    for company in config.TARGET_COMPANIES:
+        print("-", company)
+
+
+if __name__ == "__main__":
+    main()
