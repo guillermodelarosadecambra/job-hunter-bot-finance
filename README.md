@@ -1,31 +1,93 @@
-# job-hunter-bot-finance
-Automated Python bot that scans finance and trading job opportunities (risk, portfolio, commodities) across multiple platforms and sends alerts when relevant roles appear.
-
-
 # Finance Job Hunter Bot
 
-Python bot that automatically scans job opportunities in finance, trading and commodities.
+Automated Python bot that scans finance, trading and commodities job opportunities across multiple platforms and sends alerts when relevant roles appear.
 
-The bot searches across multiple job platforms and company career pages, filters roles based on predefined criteria and sends alerts when relevant opportunities appear.
+---
 
-## Target roles
+# Project Structure
 
-- Risk Analyst
-- Portfolio Analyst
-- Trading Analyst
-- Commodity Analyst
-- Quantitative Analyst (Junior)
+## config.py
+Main configuration file.
 
-## Features
+Contains:
+- target roles
+- locations
+- companies
+- job sources
+- keywords for filtering
 
-- Multi-platform job scraping
-- Custom job filtering
-- Duplicate detection
-- Automated alerts
-- Scheduled execution
+This file allows modifying the behaviour of the bot without changing the core code.
 
-## Technologies
+---
 
-- Python
-- Web scraping
-- GitHub Actions automation
+## main.py
+Main execution script of the bot.
+
+Responsibilities:
+- run job scrapers
+- collect job listings
+- apply filters
+- check duplicates
+- trigger notifications
+
+This file acts as the **central controller of the application**.
+
+---
+
+## jobs_database.csv
+Local storage of previously detected jobs.
+
+Purpose:
+- avoid duplicate alerts
+- keep track of already processed listings
+
+---
+
+# Folders
+
+## scrapers/
+Contains all modules responsible for collecting job listings from different platforms.
+
+Examples:
+- LinkedIn
+- Indeed
+- eFinancialCareers
+- company career pages
+
+Each scraper extracts job data such as:
+- title
+- company
+- location
+- link
+
+---
+
+## filters/
+Contains logic to filter job listings based on predefined criteria.
+
+Filters include:
+- target roles
+- junior level keywords
+- excluded senior positions
+- location filtering
+
+---
+
+## notifications/
+Handles the alert system.
+
+Responsible for sending notifications when new jobs are detected.
+
+Possible channels:
+- Telegram
+- Email
+- other messaging services
+
+---
+
+## database/
+Folder reserved for storing structured data if the project grows.
+
+Currently used for:
+- job tracking
+- potential future databases
