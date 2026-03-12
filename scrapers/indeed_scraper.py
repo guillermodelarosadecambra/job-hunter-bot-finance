@@ -1,40 +1,33 @@
-import requests
-from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
 
 def search_indeed(query="risk analyst", location="germany"):
-    url = "https://www.indeed.com/jobs"
-    params = {
-        "q": query,
-        "l": location
-    }
-
-    headers = {
-        "User-Agent": "Mozilla/5.0"
-    }
-
-    response = requests.get(url, params=params, headers=headers)
-
-    if response.status_code != 200:
-        print(f"Error al acceder a Indeed: {response.status_code}")
-        return []
-
-    soup = BeautifulSoup(response.text, "html.parser")
     jobs = []
 
-    for job_card in soup.find_all("div", class_="job_seen_beacon"):
-        title_tag = job_card.find("h2")
-        company_tag = job_card.find("span", attrs={"data-testid": "company-name"})
-        location_tag = job_card.find("div", attrs={"data-testid": "text-location"})
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
 
-        title = title_tag.get_text(strip=True) if title_tag else "N/A"
-        company = company_tag.get_text(strip=True) if company_tag else "N/A"
-        location = location_tag.get_text(strip=True) if location_tag else "N/A"
+        url = f"https://www.indeed.com/jobs?q={query}&l={location}"
+        page.goto(url, timeout=60000)
+        page.wait_for_timeout(3000)
 
-        jobs.append({
-            "title": title,
-            "company": company,
-            "location": location
-        })
+        job_cards = page.locator("div.job_seen_beacon")
+        count = job_cards.count()
+
+        for i in range(min(count, 10)):
+            job = job_cards.nth(i)
+
+            title = job.locator("h2").inner_text() if job.locator("h2").count() > 0 else "N/A"
+            company = job.locator('[data-testid="company-name"]').inner_text() if job.locator('[data-testid="company-name"]').count() > 0 else "N/A"
+            job_location = job.locator('[data-testid="text-location"]').inner_text() if job.locator('[data-testid="text-location"]').count() > 0 else "N/A"
+
+            jobs.append({
+                "title": title,
+                "company": company,
+                "location": job_location
+            })
+
+        browser.close()
 
     return jobs
